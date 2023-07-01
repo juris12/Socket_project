@@ -1,6 +1,6 @@
 PORT = 5001
 IP = '127.0.0.1'
-from lib.py_express import Server
+from lib.py_express.server import Server
 from home_route import home_route
 
 server = Server()

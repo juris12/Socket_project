@@ -1,15 +1,15 @@
-from lib.py_express import Routes
-
+from lib.py_express.routes import Routes
+from lib.py_express.server import Response
 
 
 def home_route_get(res,req,next=None):
-    data = 'HTTP/1.1 200 OK\r\n'
-    data += 'Content-Type: text/html; charset=utf-8\r\n'
-    data += '\r\n'
-    data += '<html><body><h1>Hggggggggggello World!!!!</h1></body></html>'
-    res.sendall(data.encode())
+    response = Response()
+    response.status(200)
+    response.headers(['Content-Type: text/html','charset=utf-8'])
+    response.mesage('Hggggggggggello World!!!!')
+    res.sendall(response.data())
 def home_route_post(res,req,next=None):
-    data = 'HTTP/1.1 200 OK\r\n'
+    data = 'HTTP/1.1 200\r\n'
     data += 'Content-Type: text/html; charset=utf-8\r\n'
     data += '\r\n'
     data += f'<html><body><h1>{req["body"]}</h1></body></html>'

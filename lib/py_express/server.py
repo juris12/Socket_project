@@ -2,6 +2,23 @@ import socket
 PORT = 5002
 import json
 IP = '127.0.0.1'
+class Response():
+    def __init__(self):
+        self._headers=[]
+        self._status_code = 500
+        self._mesage = ''
+    def headers(self,headers):
+        self._headers=headers
+    def status(self,headers):
+        self._status_code=headers
+    def mesage(self,mesage):
+        self._mesage=mesage
+    def data(self) -> str:
+        data = f'HTTP/1.1 {self._status_code}\r\n'
+        data += f'{"; ".join(self._headers)}\r\n'
+        data += '\r\n'
+        data += self._mesage
+        return data.encode()
 class Server():
     def __init__(self) -> None:
         self._server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
