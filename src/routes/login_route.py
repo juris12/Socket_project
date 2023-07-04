@@ -16,6 +16,7 @@ def login_route_post(res: Response,req: Request,next=None):
     try:
         db = Db()
         profil: Profile = db.get(req.body["name"])
+
         if is_not_pwd_valid(profil,req.body['pwd_hash']):
             res.status(400)
             res.headers(['Content-Type: application/json'])
