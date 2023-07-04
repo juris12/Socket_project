@@ -10,7 +10,8 @@ def profil_route_get(res: Response,req: Request,next=None):
     db = Db()
     res.status(200)
     res.headers(['Content-Type: application/json'])
-    res.json([x for x in db.get() if x.status])
+    # res.json([x for x in db.get() if x.status])
+    res.json(db.get())
     res.send()
 def profil_route_post(res: Response,req: Request,next=None):
     db = Db()

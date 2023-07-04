@@ -33,17 +33,22 @@ class Ui():
         
 
     def all_profill(self,active,list,profil):
+        list=[x for x in list if x['name'] != profil[0]["name"] ]
         os.system('cls')
         print('**************************************************************')
-        print(f' Name: {profil[0]["name"]}     IP: {profil[0]["ip"]}')
+        print(f' Name: {profil[0]["name"]}     IP: {profil[0]["ip"]}   Status: {profil[0]["status"]} ')
         print('**************************************************************')
-        headers = ['..................name..................','..................status..................']
-        rows = [
-            ([f"@                 {val['name']}",f"@                 {val['status']}"] if active == i 
-            else [f".                 {val['name']}",f".                 {val['status']}"])
-                for i,val in enumerate(list)]
-        
-        print(tabulate(rows, headers, tablefmt='grid'))
+        if len(list) == 0:
+            print('No users')
+        else:
+            
+            headers = ['..................name..................','..................status..................']
+            rows = [
+                ([f"@                 {val['name']}",f"@                 {val['status']}"] if active == i 
+                else [f".                 {val['name']}",f".                 {val['status']}"])
+                    for i,val in enumerate(list)]
+            
+            print(tabulate(rows, headers, tablefmt='grid'))
 
 
     def log_screan(self,state):

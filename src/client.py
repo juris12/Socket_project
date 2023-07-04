@@ -72,7 +72,7 @@ class Client():
         try:
             client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             client_socket.connect((IP,PORT))
-            client_socket.send(f'POST /profil/{name} HTTP/1.1\r\n\r\n)')
+            client_socket.send(f'POST /profil/{name} HTTP/1.1\r\n\r\n'.encode('utf-8'))
             response = b""
             while True:
                 data = client_socket.recv(1024)
@@ -128,7 +128,7 @@ else:
        
         while not client.is_reciving_call:
             profil_list = client.get_all()
-            match keyboard.read_key():
+            match input('comand: '):
                 case 'up':
                     if activ_index != 0:
                         activ_index -= 1
@@ -141,13 +141,13 @@ else:
                     time.sleep(0.5)
                 case 'c':
                     os.system('cls')
-                    if not profil_list[activ_index]['status']:
+                    if not profil_list[activ_index+1]['status']:
                         print('Usser is offline')
                         time.sleep(1.5)
                         os.system('cls')
                         print(ui.all_profill(activ_index,profil_list,profil))
                     else:
-                        print(profil_list[activ_index])
+                        print(profil_list[activ_index+1])
                     
                     # client.recive()
                 case 'l':
@@ -156,11 +156,13 @@ else:
                 case 'o':
                     os.system('cls')
                     client.is_reciving_call = True
-                    if client.change_status(profil_list[activ_index]['name']):
+                    if client.change_status(profil[0]["name"]):
                         print('Whaiting for incomming calls....... press q to quit')
+                        input('end: ')
+                        client.change_status(profil[0]["name"])
                     else:
                         print('error: wrong response')
-                    client.recive()
+                    # client.recive()
                     
     else:
         print(profil)
