@@ -2,12 +2,14 @@ import socket
 from gui import *
 import time
 import os
+import threading
 
 IP = '127.0.0.1'
 PORT = 5000
 
 class Client():
     def __init__(self) -> None:
+        self.is_reciving_call = False
         ...
     def get_all(self):
         try:
@@ -76,7 +78,6 @@ class Client():
             mesage = client.recv(2048).decode('utf-8')
             if mesage == 'done': flag = False
             else:print(mesage)
-            client.send(input('Mesage: ').encode('utf-8'))
         client.close()
         server.close()
     def call(self,ip):
@@ -93,50 +94,54 @@ class Client():
 
 client = Client()
 
-os.system('cls')
-print('begining')
-if input("2 recive") == '2':
-    client.recive()
+ui = Ui()
+ui.get_regester_or_login()
+ui.get_name_and_pwd()
+if ui.register_or_login == 'Register':
+    print(client.register(ui.name,ui.pwd))
 else:
-    client.call('127.0.0.1')
-# call(profil_list[activ_index])
-print('end')
-
-# def call(prof):
-#     print(prof)
-
-# ui = Ui()
-# ui.get_regester_or_login()
-# ui.get_name_and_pwd()
-# if ui.register_or_login == 'Register':
-#     print(client.register(ui.name,ui.pwd))
-# else:
-#     profil = client.login(ui.name,ui.pwd)
-#     if profil != '"message":"Name or pwd is incorect!"':
-#         profil = json.loads(profil)
-#         profil_list = client.get_all()
-#         activ_index = 0
-#         print(ui.all_profill(activ_index,profil_list,profil))
-#         for _ in range(5):
-#             match keyboard.read_key():
-#                 case 'up':
-#                     if activ_index != 0:
-#                         activ_index -= 1
-#                     print(ui.all_profill(activ_index,profil_list,profil))
-#                     time.sleep(0.5)
-#                 case 'down':
-#                     if activ_index != len(profil_list)-1:
-#                         activ_index += 1
-#                     print(ui.all_profill(activ_index,profil_list,profil))
-#                     time.sleep(0.5)
-#                 case 'c':
-#                     os.system('cls')
-#                     print('begining')
-#                     # call(profil_list[activ_index])
-#                     print('end')
-#                     time.sleep(0.5)
-#     else:
-#         print(profil)
+    profil = client.login(ui.name,ui.pwd)
+    if profil != '"message":"Name or pwd is incorect!"':
+        profil = json.loads(profil)
+        profil_list = client.get_all()
+        activ_index = 0
+        print(ui.all_profill(activ_index,profil_list,profil))
+       
+        while not client.is_reciving_call:
+            profil_list = client.get_all()
+            match keyboard.read_key():
+                case 'up':
+                    if activ_index != 0:
+                        activ_index -= 1
+                    print(ui.all_profill(activ_index,profil_list,profil))
+                    time.sleep(0.5)
+                case 'down':
+                    if activ_index != len(profil_list)-1:
+                        activ_index += 1
+                    print(ui.all_profill(activ_index,profil_list,profil))
+                    time.sleep(0.5)
+                case 'c':
+                    os.system('cls')
+                    if not profil_list[activ_index]['status']:
+                        print('Usser is offline')
+                        time.sleep(1.5)
+                        os.system('cls')
+                        print(ui.all_profill(activ_index,profil_list,profil))
+                    else:
+                        print(profil_list[activ_index])
+                    
+                    # client.recive()
+                case 'l':
+                    print('User is logged out!')
+                    break
+                case 'o':
+                    os.system('cls')
+                    client.is_reciving_call = True
+                    print('Whaiting for incomming calls....... press q to quit')
+                    client.recive()
+                    
+    else:
+        print(profil)
 
 
 

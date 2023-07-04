@@ -15,6 +15,6 @@ server = Server()
 server.route('/',home_route)
 server.route('/register',register_route)
 server.route('/login',login_route)
-server.route('/profil',profil_route)
+server.route('/profil/:id',profil_route)
 
 server.listen(IP,PORT,5)

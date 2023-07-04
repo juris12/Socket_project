@@ -28,6 +28,13 @@ class Db():
     def add_profil(self, profile: Profile):
         self._profil_list.append(profile)
         self._write_to_db(self._profil_list)
+    def change_status(self, i: Profile):
+        for z in self._profil_list:
+            try:
+                if z.name == i: z.status = not z.status
+            except KeyError:
+                pass
+        self._write_to_db(self._profil_list)
 
     def get(self,i=None):
         if i:

@@ -18,7 +18,7 @@ def capture_image():
     if not cap.isOpened():
         print("Failed to open the webcam")
         return
-    for _ in range(20):
+    for _ in range(100):
         # Read a frame from the webcam
         ret, frame = cap.read()
         # Check if the frame was read successfully
@@ -56,27 +56,6 @@ def img_to_ascii(image):
             i=0
         ascii_str += ASCII_CHARS[(pixel_value//25)-1]
     return ascii_str
-def get_available_webcams():
-    available_webcams = []
-    
-    # Iterate through the device indices starting from 0
-    for i in range(0, 10):
-        # Create a VideoCapture object
-        cap = cv2.VideoCapture(i)
-        
-        # Check if the device can be opened
-        if cap.isOpened():
-            available_webcams.append(i)
-        
-        # Release the VideoCapture object
-        cap.release()
-    
-    return available_webcams
 
-# Get the available webcams
-webcams = get_available_webcams()
 
-# Print the list of available webcams
-print("Available webcams:", webcams)
-
-# capture_image()
+capture_image()
