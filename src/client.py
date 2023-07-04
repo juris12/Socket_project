@@ -2,7 +2,8 @@ import socket
 from gui import *
 import time
 import os
-import threading
+from img_to_ascii import capture_image
+import cv2
 
 IP = '127.0.0.1'
 PORT = 5000
@@ -89,25 +90,42 @@ class Client():
             print(err)
     def recive(self):
         server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        server.bind((IP,3000))
+        server.bind((IP,3001))
         server.listen()
         client, _ = server.accept()
-        flag = True
-        while flag:
-            mesage = client.recv(2048).decode('utf-8')
-            if mesage == 'done': flag = False
-            else:print(mesage)
+        flag = 0
+        print('camera loading....')
+        cap = cv2.VideoCapture(0)
+        print('camera redy....')
+        if not cap.isOpened():
+            print("Failed to open the webcam")
+        else:
+            while flag < 200:
+                mesage = client.recv(8192).decode('utf-8')
+                client.send(capture_image(cap).encode('utf-8'))
+                os.system('cls')
+                print(mesage)
+                flag += 1
+        cap.release()
         client.close()
         server.close()
     def call(self,ip):
         client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        client.connect((ip,3000))
-        flag = True
-        while flag:
-            client.send(input('Mesage: ').encode('utf-8'))
-            mesage = client.recv(2048).decode('utf-8')
-            if mesage == 'done': flag = False
-            else:print(mesage)
+        client.connect((ip,3001))
+        flag = 0
+        print('camera loading....')
+        cap = cv2.VideoCapture(0)
+        print('camera redy....')
+        if not cap.isOpened():
+            print("Failed to open the webcam")
+        else:
+            while  flag < 200:
+                client.send(capture_image(cap).encode('utf-8'))
+                mesage = client.recv(8192).decode('utf-8')
+                os.system('cls')
+                print(mesage)
+                flag += 1
+        cap.release()
         client.close()
  
 
@@ -148,6 +166,9 @@ else:
                         print(ui.all_profill(activ_index,profil_list,profil))
                     else:
                         print(profil_list[activ_index+1])
+                        print(f'caling {profil_list[activ_index+1]["name"]}........')
+                        time.sleep(1.5)
+                        client.call('127.0.0.1')
                     
                     # client.recive()
                 case 'l':
@@ -157,12 +178,13 @@ else:
                     os.system('cls')
                     client.is_reciving_call = True
                     if client.change_status(profil[0]["name"]):
+                        
                         print('Whaiting for incomming calls....... press q to quit')
+                        client.recive()
                         input('end: ')
                         client.change_status(profil[0]["name"])
                     else:
                         print('error: wrong response')
-                    # client.recive()
                     
     else:
         print(profil)

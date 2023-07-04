@@ -12,23 +12,15 @@ def get_terminal_height():
 new_height = get_terminal_height()
 
 
-def capture_image():
-    cap = cv2.VideoCapture(0)
-    # Check if the webcam is opened successfully
-    if not cap.isOpened():
-        print("Failed to open the webcam")
-        return
-    for _ in range(100):
-        # Read a frame from the webcam
-        ret, frame = cap.read()
-        # Check if the frame was read successfully
-        if not ret:
-            print("Failed to capture frame from the webcam")
-            return
-        os.system('cls')
-        print(img_to_ascii(frame))
-    cap.release()
+def capture_image(camera):
+    # Read a frame from the webcam
+    ret, frame = camera.read()
+    # Check if the frame was read successfully
+    if not ret:
+        return "Failed to capture frame from the webcam"
+    return img_to_ascii(frame)
         
+    
 
 def img_to_ascii(image):
     # Convert the image to grayscale
@@ -41,7 +33,7 @@ def img_to_ascii(image):
     new_width = int(gray_image.shape[1] * scale_factor)
 
     # Resize the image
-    resized_image = cv2.resize(gray_image, (int(new_width*2.5), new_height))
+    resized_image = cv2.resize(gray_image, (int(new_width*2), new_height))
 
 
     # Convert the grayscale image to an array of pixel values
@@ -58,4 +50,16 @@ def img_to_ascii(image):
     return ascii_str
 
 
-capture_image()
+if __name__ == "__main__":
+    print('camera loading....')
+    cap = cv2.VideoCapture(0)
+    print('camera redy....')
+    # Check if the webcam is opened successfully
+    if not cap.isOpened():
+        print("Failed to open the webcam")
+    else:
+        for _ in range(100):
+            os.system('cls')
+            print(capture_image(cap))
+        cap.release()
+            
