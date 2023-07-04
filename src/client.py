@@ -68,6 +68,25 @@ class Client():
                 return None
         except ConnectionRefusedError as err:
             print(err)
+    def change_status(self,name):
+        try:
+            client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            client_socket.connect((IP,PORT))
+            client_socket.send(f'POST /profil/{name} HTTP/1.1\r\n\r\n)')
+            response = b""
+            while True:
+                data = client_socket.recv(1024)
+                if not data:
+                    break
+                response += data
+            response = response.decode()
+            client_socket.shutdown(socket.SHUT_WR)
+            if response != '"mesage":"no user found"':
+                return True
+            else:
+                return False
+        except ConnectionRefusedError as err:
+            print(err)
     def recive(self):
         server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         server.bind((IP,3000))
@@ -137,7 +156,10 @@ else:
                 case 'o':
                     os.system('cls')
                     client.is_reciving_call = True
-                    print('Whaiting for incomming calls....... press q to quit')
+                    if client.change_status(profil_list[activ_index]['name']):
+                        print('Whaiting for incomming calls....... press q to quit')
+                    else:
+                        print('error: wrong response')
                     client.recive()
                     
     else:
